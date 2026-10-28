@@ -58,7 +58,7 @@ function drawSprite(sprite,pose,row,index,alpha=1){const f=spriteFrame(sprite,ro
 function actor(pose,index,alpha){if(pose.hp<=0)return;const old=previous[index]||pose;const p={...pose,x:old.x+(pose.x-old.x)*alpha,y:old.y+(pose.y-old.y)*alpha};const sprite=pose.kind===0?art.hero:art.sentry;
   let row=Math.abs(pose.vx)>12?1:0, animation=Math.floor(frame/(row===1?6:14))%sprite.rows[row].length;
   if(pose.kind===0&&pose.dodge){row=3;animation=Math.floor((16-pose.dodge)/16*sprite.rows[3].length);}
-  else if(pose.attack){row=2;const length=pose.kind===0?(pose.combo===3?32:26):50;animation=Math.floor((length-pose.attack)/length*sprite.rows[2].length);}
+  else if(pose.attack){row=2;const length=pose.kind===0?(pose.combo===3?32:26):50,elapsed=length-pose.attack;animation=pose.kind===0?(elapsed<6?0:elapsed<=11?1:sprite.rows[2].length-1):(elapsed<15?0:elapsed<28?1:elapsed<=38?2:3);}
   if(!pose.grounded&&!pose.dodge&&!pose.attack){row=1;animation=pose.vy<0?1:2;}
   ctx.fillStyle='#020b0c66';ctx.beginPath();ctx.ellipse(p.x+p.w/2,p.y+p.h+1,17,3,0,0,Math.PI*2);ctx.fill();
   drawSprite(sprite,p,row,animation);
