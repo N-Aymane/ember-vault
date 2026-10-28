@@ -1,0 +1,6 @@
+[
+  "index.html", "style.css", "game.js", "storage.js", "controls.js",
+  "assets/vault.png", "assets/environment.png", "assets/hero.png", "assets/hero.json",
+  "assets/sentry.png", "assets/sentry.json", "assets/icons/fire.svg", "assets/icons/keyboard.svg",
+  "assets/icons/volume-up.svg", "assets/icons/fullscreen.svg", "assets/icons/controller.svg", "assets/icons/LICENSE"
+]

@@ -1,0 +1,6 @@
+target/
+.tools/
+.vercel/
+__pycache__/
+artifacts/
+.env*

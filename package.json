@@ -1,0 +1,7 @@
+{
+  "name": "ember-vault",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"build": "python scripts/build.py", "test": "node --test tests/*.test.js", "serve": "python -m http.server 4173 --directory dist"}
+}

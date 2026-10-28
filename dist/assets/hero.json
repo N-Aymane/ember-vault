@@ -1,0 +1,18 @@
+{
+  "image": "hero.png",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "frames": [
+    {"x":80,"y":152,"w":267,"h":247,"anchorX":164,"anchorY":244,"height":240},
+    {"x":535,"y":151,"w":254,"h":248,"anchorX":161,"anchorY":244,"height":240},
+    {"x":950,"y":168,"w":313,"h":230,"anchorX":180,"anchorY":226,"height":240},
+    {"x":1415,"y":168,"w":300,"h":232,"anchorX":158,"anchorY":228,"height":240},
+    {"x":90,"y":523,"w":237,"h":281,"anchorX":155,"anchorY":277,"height":240},
+    {"x":509,"y":588,"w":394,"h":215,"anchorX":141,"anchorY":211,"height":240},
+    {"x":985,"y":571,"w":286,"h":233,"anchorX":149,"anchorY":229,"height":240},
+    {"x":1411,"y":642,"w":302,"h":162,"anchorX":149,"anchorY":158,"height":240}
+  ],
+  "rows": [[0,1],[2,3],[4,5,6],[7]],
+  "frameNames": ["idle-a","idle-b","run-a","run-b","windup","strike","recovery","dodge"],
+  "notes": "Explicit measured disjoint frame rectangles, not uniform-cell cropping. Per-frame ground/root anchors compensate for generated row baselines. Height240 is the shared neutral head-to-foot scale, excluding sword/scarf extents. Small low-alpha warm edge pixels remain; source alpha is preserved unchanged."
+}

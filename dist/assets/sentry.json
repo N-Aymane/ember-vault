@@ -1,0 +1,184 @@
+{
+  "image": "sentry.png",
+  "width": 1254,
+  "height": 1254,
+  "frames": [
+    {
+      "x": 43,
+      "y": 66,
+      "w": 189,
+      "h": 249,
+      "anchorX": 127,
+      "anchorY": 245,
+      "height": 196
+    },
+    {
+      "x": 358,
+      "y": 67,
+      "w": 190,
+      "h": 248,
+      "anchorX": 126,
+      "anchorY": 244,
+      "height": 196
+    },
+    {
+      "x": 671,
+      "y": 66,
+      "w": 188,
+      "h": 249,
+      "anchorX": 127,
+      "anchorY": 245,
+      "height": 196
+    },
+    {
+      "x": 981,
+      "y": 66,
+      "w": 191,
+      "h": 249,
+      "anchorX": 131,
+      "anchorY": 245,
+      "height": 196
+    },
+    {
+      "x": 36,
+      "y": 367,
+      "w": 213,
+      "h": 252,
+      "anchorX": 134,
+      "anchorY": 248,
+      "height": 196
+    },
+    {
+      "x": 338,
+      "y": 366,
+      "w": 220,
+      "h": 254,
+      "anchorX": 146,
+      "anchorY": 250,
+      "height": 196
+    },
+    {
+      "x": 658,
+      "y": 360,
+      "w": 219,
+      "h": 260,
+      "anchorX": 140,
+      "anchorY": 256,
+      "height": 196
+    },
+    {
+      "x": 976,
+      "y": 363,
+      "w": 215,
+      "h": 257,
+      "anchorX": 136,
+      "anchorY": 253,
+      "height": 196
+    },
+    {
+      "x": 39,
+      "y": 657,
+      "w": 221,
+      "h": 258,
+      "anchorX": 131,
+      "anchorY": 254,
+      "height": 196
+    },
+    {
+      "x": 336,
+      "y": 728,
+      "w": 241,
+      "h": 187,
+      "anchorX": 148,
+      "anchorY": 183,
+      "height": 196
+    },
+    {
+      "x": 632,
+      "y": 736,
+      "w": 340,
+      "h": 179,
+      "anchorX": 166,
+      "anchorY": 175,
+      "height": 196
+    },
+    {
+      "x": 975,
+      "y": 727,
+      "w": 256,
+      "h": 188,
+      "anchorX": 137,
+      "anchorY": 184,
+      "height": 196
+    },
+    {
+      "x": 41,
+      "y": 981,
+      "w": 252,
+      "h": 210,
+      "anchorX": 129,
+      "anchorY": 206,
+      "height": 196
+    },
+    {
+      "x": 393,
+      "y": 1020,
+      "w": 200,
+      "h": 171,
+      "anchorX": 91,
+      "anchorY": 167,
+      "height": 196
+    },
+    {
+      "x": 700,
+      "y": 979,
+      "w": 188,
+      "h": 213,
+      "anchorX": 98,
+      "anchorY": 209,
+      "height": 196
+    },
+    {
+      "x": 942,
+      "y": 1112,
+      "w": 289,
+      "h": 90,
+      "anchorX": 170,
+      "anchorY": 86,
+      "height": 196
+    }
+  ],
+  "rows": [
+    [
+      0,
+      1,
+      2,
+      3
+    ],
+    [
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      8,
+      9,
+      10,
+      11
+    ],
+    [
+      12,
+      13,
+      14,
+      15
+    ]
+  ],
+  "rowNames": [
+    "idle",
+    "walk",
+    "attack",
+    "hit-death"
+  ],
+  "notes": "Calibrated individual source rectangles; nominal standing body height196 excludes spear. Anchors relative to each source crop. Original raster preserved without editing."
+}

@@ -1,0 +1,11 @@
+[package]
+name = "rogue-web"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+rogue-core = { path = "../game-core" }
