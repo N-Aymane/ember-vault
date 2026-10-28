@@ -1,5 +1,7 @@
 # Ember Vault
 
+**[Play Ember Vault](https://ember-vault-six.vercel.app)**
+
 A small browser action platformer with a Rust/WebAssembly simulation, original pixel-art characters, and an overgrown cathedral to fight through.
 
 ## Play
