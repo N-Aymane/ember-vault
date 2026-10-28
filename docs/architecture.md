@@ -14,7 +14,7 @@ Seeded xorshift32 chooses platform coordinates. Zero seeds normalize to one. Ren
 
 ## Browser ABI
 
-`reset(seed,best,cleared)` starts a run. `tick(input)` advances one frame. `entity(kind,index,field)` exposes rendering data; `kind=0` is the hero, `1` is an enemy and `2` is a platform. Actor fields are x/y/width/height/facing/hp/attack-ticks/dodge-ticks/invulnerability-ticks/vx, indexed 0–9. Platforms use fields 0–3. Invalid selectors return zero.
+`reset(seed,best,cleared)` starts a run. `release_input()` clears held-input history and buffered actions without advancing simulation, so pausing does not create stuck inputs. `tick(input)` advances one frame. `entity(kind,index,field)` exposes rendering data; `kind=0` is the hero, `1` is an enemy and `2` is a platform. Actor fields are x/y/width/height/facing/hp/attack-ticks/dodge-ticks/invulnerability-ticks/vx, indexed 0–9. Platforms use fields 0–3. Invalid selectors return zero.
 
 `stat(field)` exposes these integer fields:
 
@@ -36,6 +36,6 @@ AudioContext is created/resumed after a click. Failure leaves silent gameplay. W
 
 ## Packaging
 
-`scripts/build.py` builds the locked WASM crate and copies only four named browser files plus the WASM file into `dist`. It refuses unexpected existing distribution entries. `.vercelignore` excludes all research and installation content. The static Vercel configuration serves `dist`; the intended deployment is local build followed by CLI deployment, not a remote Rust build.
+`scripts/build.py` builds the locked WASM crate and copies the explicit `scripts/web-files.json` allowlist of browser modules and original art plus the WASM file into `dist`. It refuses unexpected existing distribution entries. `.vercelignore` excludes all research and installation content. The static Vercel configuration serves `dist`; the intended deployment is local build followed by CLI deployment, not a remote Rust build.
 
 Asset-copy tooling validates the original archive SHA, reads only exact selected catalog entries, checks PNG/WAV/Ogg signatures and writes to ignored private research. It does not decode binary atlases/TMX, execute Haxe, or publish copied content.
