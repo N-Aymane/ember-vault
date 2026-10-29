@@ -33,6 +33,32 @@ pub extern "C" fn stat(field: u32) -> u32 {
             7 => game.save.cleared,
             8 => u32::from(game.cleared()),
             9 => u32::from(game.player.cooldown),
+            10 => game.gold,
+            11 => game.keys,
+            12 => game.flasks,
+            13 => game.weapon,
+            14 => game.weapon_tier,
+            15 => game.power,
+            16 => game.max_hp as u32,
+            17 => u32::from(game.skill_cooldown),
+            18 => game.room_id as u32,
+            19 => rogue_core::THEMES[game.room_id],
+            20 => game.seen,
+            21 => game.cleared_mask,
+            22 => u32::from(game.chest_open),
+            23 => u32::from(game.shrine_used),
+            24 => u32::from(game.won),
+            25 => game.interaction(),
+            26 => game.loot.len() as u32,
+            27 => game.hazards.len() as u32,
+            28 => game.exits().len() as u32,
+            29 => game.next_exit as u32,
+            30 => game.weapon_damage() as u32,
+            31 => u32::from(game.weapon_duration()),
+            32 => game.weapon_reach() as u32,
+            33 => u32::from(!game.history.is_empty()),
+            34 => game.nearby_weapon().map_or(99, |item| item.amount),
+            35 => game.nearby_weapon().map_or(0, |item| item.rarity),
             _ => 0,
         }
     })
@@ -52,6 +78,8 @@ fn actor_field(actor: &Actor, field: u32) -> f32 {
         10 => f32::from(actor.combo),
         11 => f32::from(u8::from(actor.grounded)),
         12 => actor.vy,
+        13 => actor.kind as f32,
+        14 => actor.max_hp as f32,
         _ => 0.0,
     }
 }
@@ -75,9 +103,54 @@ pub extern "C" fn entity(kind: u32, index: u32, field: u32) -> f32 {
                     3 => rect.h,
                     _ => 0.0,
                 }),
+            3 => game
+                .loot
+                .get(index as usize)
+                .map_or(0.0, |drop| match field {
+                    0 => drop.x,
+                    1 => drop.y,
+                    2 => drop.kind as f32,
+                    3 => drop.amount as f32,
+                    4 => drop.rarity as f32,
+                    5 => f32::from(u8::from(drop.active)),
+                    _ => 0.0,
+                }),
+            4 => game
+                .hazards
+                .get(index as usize)
+                .map_or(0.0, |hazard| match field {
+                    0 => hazard.x,
+                    1 => FLOOR_HEIGHT,
+                    2 => hazard.w,
+                    3 => 58.0,
+                    4 => ((game.ticks + hazard.phase) % 180) as f32,
+                    _ => 0.0,
+                }),
             _ => 0.0,
         }
     })
+}
+
+const FLOOR_HEIGHT: f32 = rogue_core::FLOOR - 58.0;
+
+#[no_mangle]
+pub extern "C" fn choose_exit(index: u32) -> u32 {
+    GAME.with(|game| u32::from(game.borrow_mut().choose_exit(index as usize)))
+}
+
+#[no_mangle]
+pub extern "C" fn route(index: u32) -> u32 {
+    GAME.with(|game| {
+        game.borrow()
+            .exits()
+            .get(index as usize)
+            .map_or(99, |&id| id as u32)
+    })
+}
+
+#[no_mangle]
+pub extern "C" fn castle_test() -> u32 {
+    rogue_core::castle_suite()
 }
 #[no_mangle]
 pub extern "C" fn save_supported(version: u32) -> u32 {

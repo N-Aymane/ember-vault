@@ -1,5 +1,7 @@
 # Browser foundation
 
+The castle and loot expansion is documented in [expedition.md](expedition.md), including route topology, resources, weapon tiers, input extensions, room caching and validation. It supersedes the initial single-room generation and enemy description below.
+
 The game is an original, dependency-free Rust prototype. No recovered Dead Cells function is executed in the browser. The offline inspection tools are independent of the runtime build.
 
 ## Simulation boundary

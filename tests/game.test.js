@@ -8,6 +8,9 @@ async function game() {
   const {instance} = await WebAssembly.instantiate(bytes, {});
   return instance.exports;
 }
+test('castle loot, chests, weapons, resources, hazards, branching, room caching and boss victory',async()=>{
+  const api=await game();assert.equal(api.castle_test(),24);
+});
 test('compiled Rust core regression suite executes in WebAssembly', async () => {
   const api = await game();
   assert.equal(api.self_test(), 14);

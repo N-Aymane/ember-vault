@@ -16,3 +16,12 @@ test('remapped actions retain arrows and Shift aliases without duplicating inval
   for(const invalid of [null,{}, {...DEFAULT_BINDINGS,attack:'KeyA'}, {...DEFAULT_BINDINGS,jump:'Escape'}, {...DEFAULT_BINDINGS,dodge:44}])assert.deepEqual(validBindings(invalid),DEFAULT_BINDINGS);
   assert.equal(keyLabel('KeyF'),'F');assert.equal(keyLabel('Space'),'Space');
 });
+test('older saved bindings retain custom keys when expedition actions are added',()=>{
+  const old={left:'KeyA',right:'KeyD',jump:'Space',attack:'KeyE',dodge:'KeyK',down:'KeyS'};
+  const migrated=validBindings(old);
+  assert.equal(migrated.attack,'KeyE');assert.notEqual(migrated.interact,'KeyE');
+  assert.equal(new Set(Object.values(migrated)).size,Object.keys(DEFAULT_BINDINGS).length);
+  const state=new InputState(migrated);state.down(migrated.interact);assert.equal(state.snapshot(),64);
+  state.clear();state.down(migrated.heal);assert.equal(state.snapshot(),128);
+  state.clear();state.down(migrated.skill);assert.equal(state.snapshot(),256);
+});

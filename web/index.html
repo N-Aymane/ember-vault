@@ -1,28 +1,68 @@
 <!doctype html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#091317">
+
   <title>Ember Vault · The Overgrown Keep</title>
+
   <link rel="icon" href="assets/icons/fire.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
+
   <main>
-    <header class="topbar"><a href="./" class="brand" aria-label="Ember Vault home"><img src="assets/icons/fire.svg" alt=""><span>EMBER <b>/ VAULT</b></span></a><nav aria-label="Game settings"><button id="controls" aria-label="Controls"><img src="assets/icons/keyboard.svg" alt=""><span>Controls</span></button><button id="mute" aria-label="Sound on" aria-pressed="false"><img src="assets/icons/volume-up.svg" alt=""><span>Sound on</span></button><button id="fullscreen" aria-label="Fullscreen"><img src="assets/icons/fullscreen.svg" alt=""><span>Fullscreen</span></button></nav></header>
-    <section class="intro"><div><p class="eyebrow">THE OVERGROWN KEEP</p><h1>A spark in the dark.</h1></div><div class="chapter"><p id="chapter-name">Chamber 01 <span>/</span> The Hollow</p><small>BEST SCORE <b id="best">000000</b></small></div></section>
+
+    <header class="topbar"><a href="./" class="brand" aria-label="Ember Vault home"><img src="assets/icons/fire.svg" alt=""><span>EMBER <b>/ VAULT</b></span></a><nav aria-label="Game settings"><button id="map-toggle" aria-label="Castle map">Map <kbd>M</kbd></button><button id="controls" aria-label="Controls"><img src="assets/icons/keyboard.svg" alt=""><span>Controls</span></button><button id="mute" aria-label="Sound on" aria-pressed="false"><img src="assets/icons/volume-up.svg" alt=""><span>Sound on</span></button><button id="fullscreen" aria-label="Fullscreen"><img src="assets/icons/fullscreen.svg" alt=""><span>Fullscreen</span></button></nav></header>
+
+    <section class="intro"><div><p class="eyebrow" id="area-name">THE OVERGROWN KEEP</p><h1>A spark in the dark.</h1></div><div class="chapter"><p id="chapter-name">Chamber 01 <span>/</span> The Hollow</p><small>BEST SCORE <b id="best">000000</b></small></div></section>
+
     <section class="game-shell" id="game-shell" aria-label="Ember Vault action platformer">
+
       <div class="viewport" id="viewport">
-        <canvas id="game" width="960" height="390" tabindex="0" aria-label="Game: A and D to move, hold Space to jump higher, J or click to attack, K or Shift to dodge, Escape to pause. Change keys in Controls."></canvas>
+
+        <canvas id="game" width="960" height="390" tabindex="0" aria-label="Game: A and D to move, hold Space to jump higher, J or click to attack, K or Shift to dodge, Escape to pause. E interacts, H heals, Q casts a rune, M opens the map. Change keys in Controls."></canvas>
+
         <div class="hud" aria-label="Game status"><div class="vitality"><div><span>VITALITY</span><div id="health" aria-label="Health 5 of 5"><i></i><i></i><i></i><i></i><i></i></div></div><progress id="dodge-meter" max="48" value="48" aria-label="Dodge recovery"></progress><small id="dodge-label">DODGE READY</small></div><span class="chamber" id="room">CHAMBER 01</span><div class="score">SCORE <b id="score">000000</b></div></div>
-        <div class="room-notice" id="room-notice" aria-live="polite"></div>
-        <div class="overlay" id="overlay"><p class="eyebrow" id="overlay-label">A NEW DESCENT</p><h2 id="overlay-title">Keep the flame alive.</h2><p id="overlay-copy">An ancient keep. Two restless sentries.<br>Find your opening, then make it count.</p><button class="primary" id="play" disabled>Preparing the vault…</button><p class="small" id="save-status" role="status">Opening your local save…</p></div>
+
+        <div class="boss-bar" id="boss-bar" hidden><span>THE CASTELLAN</span><progress id="boss-health" max="28" value="28" aria-label="Castellan health"></progress></div><div class="loot-compare" id="loot-compare" hidden><strong id="loot-name"></strong><p id="loot-stats"></p><small id="loot-action"></small></div><div class="room-notice" id="room-notice" aria-live="polite"></div>
+
+        <div class="overlay" id="overlay"><p class="eyebrow" id="overlay-label">A NEW DESCENT</p><h2 id="overlay-title">Keep the flame alive.</h2><p id="overlay-copy">Explore a branching castle. Claim its lost relics.<br>Defeat the Castellan and find the way to daybreak.</p><button class="primary" id="play" disabled>Preparing the vault…</button><p class="small" id="save-status" role="status">Opening your local save…</p></div>
+
       </div>
+
       <div class="game-footer"><span id="hint">Defeat the sentries. Reach the gate.</span><div><button id="pause" disabled>Pause <kbd>Esc</kbd></button><button id="fullscreen-exit" hidden>Exit fullscreen</button></div></div>
+
     </section>
+
+    <section class="run-inventory" aria-label="Run inventory">
+
+      <div class="equipped"><canvas data-loot-icon="4" id="weapon-icon" width="56" height="38" aria-hidden="true"></canvas><div><small>EQUIPPED</small><strong id="weapon-name">Worn Emberblade</strong><span id="weapon-stats">1 damage · balanced</span></div></div>
+
+      <div class="resources"><span><canvas data-loot-icon="0" width="28" height="28" aria-hidden="true"></canvas><b id="gold">0</b> gold</span><span><canvas data-loot-icon="7" width="28" height="28" aria-hidden="true"></canvas><b id="keys">0</b> keys</span><span><canvas data-loot-icon="6" width="28" height="28" aria-hidden="true"></canvas><b id="power">0</b> power</span></div>
+
+      <div class="ability-actions"><button data-input="64" id="interact-button"><kbd data-key="interact">E</kbd><span>Interact</span></button><button data-input="128" id="heal-button"><kbd data-key="heal">H</kbd><span id="flask-label">Flask 2/2</span></button><button data-input="256" id="skill-button"><kbd data-key="skill">Q</kbd><span id="skill-label">Rune burst</span></button></div>
+
+    </section>
+
     <section class="instructions" aria-label="Controls"><div><kbd data-key="left">A</kbd><kbd data-key="right">D</kbd><span>Move</span></div><div><kbd data-key="jump">Space</kbd><span>Hold to jump higher</span></div><div><kbd data-key="attack">J</kbd><span>/ Click · Strike</span></div><div><kbd data-key="dodge">K</kbd><span>/ Shift · Dodge</span></div><div><kbd>Esc</kbd><span>Pause</span></div><span class="controller" id="controller-status"><img src="assets/icons/controller.svg" alt=""><span id="controller-text">Gamepad supported</span></span></section>
+
     <div class="touch-controls" aria-label="Touch controls"><div><button data-input="1" aria-label="Move left">Left</button><button data-input="2" aria-label="Move right">Right</button></div><div><button data-input="4" aria-label="Jump">Jump</button><button data-input="16" aria-label="Dodge">Dodge</button><button data-input="8" aria-label="Strike">Strike</button></div></div>
+
     <footer><span></span><p>Built for one more run.</p><span></span></footer>
+
   </main>
+
   <dialog id="settings" aria-labelledby="settings-title"><div class="settings-head"><div><p class="eyebrow">MAKE IT YOURS</p><h2 id="settings-title">Find your rhythm.</h2></div><button id="close-settings" aria-label="Close controls">Close</button></div><p class="settings-intro">Choose a key to change it. Arrow keys, Shift, and mouse controls always work.</p><div id="binding-list"></div><p class="binding-note" id="binding-status" role="status">Left click strikes. Right click dodges. Down + Jump drops through a platform.</p><div class="options"><label><input id="less-motion" type="checkbox"> Reduced motion <small>Less shake, flashes and drifting particles</small></label><label class="volume">Sound volume <input id="volume" type="range" min="0" max="100" value="50" aria-label="Sound volume"></label></div><div class="settings-actions"><button id="reset-controls">Reset keys</button><button class="primary" id="done-settings">Back to the vault</button></div><p class="small">Gamepad: left stick / D-pad · A jump · X strike · B dodge · Start pause</p></dialog>
+
+  <dialog id="castle-map" aria-labelledby="map-title"><div class="settings-head"><div><p class="eyebrow">YOUR PATH THROUGH THE KEEP</p><h2 id="map-title">Castle map</h2></div><button id="close-map" aria-label="Close castle map">Close</button></div><p id="map-summary" class="settings-intro"></p><div class="map-scroll" tabindex="0" aria-label="Castle route diagram"><div class="map-board" id="map-board"></div></div><p id="map-help" role="status">Choose an adjacent path, then reach the right-hand gate. Cleared rooms stay cleared.</p><div class="map-legend"><span>Current room</span><span>Cleared</span><span>Discovered</span><span>Unexplored</span></div><p class="small">Gold, gear and powers belong to this run. Best score and cleared rooms save on this device. Interact at the left door of a cleared room to backtrack.</p><button class="primary" id="return-map">Return to the castle</button></dialog>
+
   <script type="module" src="game.js"></script>
+
 </body>
+
 </html>
+

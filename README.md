@@ -11,11 +11,17 @@ A small browser action platformer with a Rust/WebAssembly simulation, original p
 - **J / left click:** strike; tap near recovery to queue a three-hit combo
 - **K / Shift / right click:** dodge; cancels strike recovery
 - **S / Down + Jump:** drop through a raised platform
+- **E:** interact, open chests and swap gear
+- **H:** healing flask
+- **Q:** rune burst
+- **M:** castle map and route choice
 - **Escape:** pause
 
-Keyboard bindings, reduced motion and sound volume are available in **Controls**. Settings and high scores stay on your device. Touch controls and the standard Gamepad API are supported: stick/D-pad, A jump, X strike, B dodge, Start pause.
+Keyboard bindings, reduced motion and sound volume are available in **Controls**. Settings and high scores stay on your device. Touch controls and the standard Gamepad API are supported: stick/D-pad, A jump, X strike, B dodge, Y interact, LB heal, RB rune, Back map, Start pause.
 
-Defeat the sentries and reach the right-hand gate. New chambers add enemies. Death permits an immediate restart.
+Explore nine connected castle locations with branching paths, distinct scenery and layouts, one-time chests, magnetic gold, keys, three weapon classes and rarity tiers, power scrolls, a vitality forge and a healing sanctuary. Clear a room and reach its right-hand gate to take your selected route. Backtrack through cleared rooms without respawning enemies or treasure. Defeat the Castellan to reach Daybreak.
+
+Gold, gear and upgrades belong to the current run and reset on death. Best scores, cleared-room totals and control preferences remain saved on your device. See [castle expeditions](docs/expedition.md) for the mechanics and route diagram.
 
 ## Run locally
 

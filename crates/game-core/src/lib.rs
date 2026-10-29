@@ -11,6 +11,8 @@ pub const JUMP: u32 = 4;
 pub const ATTACK: u32 = 8;
 pub const DODGE: u32 = 16;
 pub const DOWN: u32 = 32;
+mod castle;
+pub use castle::*;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rect {
@@ -43,6 +45,8 @@ pub struct Actor {
     pub ai: u16,
     pub hit: bool,
     pub combo: u8,
+    pub kind: u32,
+    pub max_hp: i32,
 }
 impl Actor {
     fn new(x: f32, hp: i32) -> Self {
@@ -65,6 +69,8 @@ impl Actor {
             ai: 0,
             hit: false,
             combo: 0,
+            kind: 0,
+            max_hp: hp,
         }
     }
 }
@@ -96,6 +102,27 @@ pub struct World {
     pub seed: u32,
     pub events: u32,
     pub save: Save,
+    pub room_id: usize,
+    pub castle_seed: u32,
+    pub rooms: Vec<Option<RoomState>>,
+    pub history: Vec<usize>,
+    pub seen: u32,
+    pub cleared_mask: u32,
+    pub next_exit: usize,
+    pub loot: Vec<Loot>,
+    pub hazards: Vec<Hazard>,
+    pub chest_open: bool,
+    pub shrine_used: bool,
+    pub gold: u32,
+    pub keys: u32,
+    pub flasks: u32,
+    pub max_hp: i32,
+    pub weapon: u32,
+    pub weapon_tier: u32,
+    pub power: u32,
+    pub skill_cooldown: u16,
+    pub heal_cooldown: u16,
+    pub won: bool,
     previous: u32,
     coyote: u16,
     jump_buffer: u16,
@@ -123,6 +150,27 @@ impl World {
             seed: seed.max(1),
             events: 0,
             save,
+            room_id: 0,
+            castle_seed: seed.max(1),
+            rooms: vec![None; 9],
+            history: Vec::new(),
+            seen: 1,
+            cleared_mask: 0,
+            next_exit: 0,
+            loot: Vec::new(),
+            hazards: Vec::new(),
+            chest_open: false,
+            shrine_used: false,
+            gold: 0,
+            keys: 0,
+            flasks: 2,
+            max_hp: 5,
+            weapon: 0,
+            weapon_tier: 0,
+            power: 0,
+            skill_cooldown: 0,
+            heal_cooldown: 0,
+            won: false,
             previous: 0,
             coyote: 5,
             jump_buffer: 0,
@@ -135,24 +183,7 @@ impl World {
     }
 
     fn generate(&mut self) {
-        self.platforms = vec![Rect {
-            x: 0.0,
-            y: FLOOR,
-            w: WIDTH,
-            h: HEIGHT - FLOOR,
-        }];
-        for i in 0..3 {
-            let x = 180.0 + i as f32 * 220.0 + (random(&mut self.seed) % 40) as f32;
-            self.platforms.push(Rect {
-                x,
-                y: 340.0 - (random(&mut self.seed) % 3) as f32 * 26.0,
-                w: 120.0,
-                h: 16.0,
-            });
-        }
-        self.enemies = (0..(self.room.min(4) + 1))
-            .map(|i| Actor::new(390.0 + i as f32 * 105.0, 3 + (self.room / 3).min(3) as i32))
-            .collect();
+        castle::populate(self);
         self.player.rect.x = 68.0;
         self.player.rect.y = FLOOR - 40.0;
         self.player.vx = 0.0;
@@ -178,12 +209,17 @@ impl World {
 
     pub fn step(&mut self, input: u32) {
         self.events = 0;
-        if self.player.hp <= 0 {
+        if self.player.hp <= 0 || self.won {
             return;
         }
         self.ticks = self.ticks.wrapping_add(1);
         let pressed = input & !self.previous;
         self.previous = input;
+        self.castle_actions(pressed);
+        let damage = self.weapon_damage();
+        let base_duration = self.weapon_duration();
+        let reach = self.weapon_reach();
+        let mut deaths = Vec::new();
         self.jump_buffer = if pressed & JUMP != 0 {
             7
         } else {
@@ -210,7 +246,8 @@ impl World {
         if direction != 0.0 && p.dodge == 0 {
             p.facing = direction;
         }
-        if pressed & DODGE != 0 && p.cooldown == 0 && p.attack <= 14 {
+        let recovery_threshold = base_duration + if p.combo == 3 { 6 } else { 0 } - 12;
+        if pressed & DODGE != 0 && p.cooldown == 0 && p.attack <= recovery_threshold {
             p.dodge = 16;
             p.cooldown = 48;
             p.invulnerable = 16;
@@ -246,7 +283,7 @@ impl World {
             } else {
                 1
             };
-            p.attack = if p.combo == 3 { 32 } else { 26 };
+            p.attack = base_duration + if p.combo == 3 { 6 } else { 0 };
             self.combo_window = 55;
             self.attack_buffer = 0;
             self.events |= 2;
@@ -254,7 +291,7 @@ impl World {
                 enemy.hit = false;
             }
         }
-        let attack_length = if p.combo == 3 { 32 } else { 26 };
+        let attack_length = base_duration + if p.combo == 3 { 6 } else { 0 };
         let active = (attack_length - 11..=attack_length - 6).contains(&p.attack);
         p.vx = if p.dodge > 0 {
             p.facing * 640.0
@@ -272,10 +309,10 @@ impl World {
             x: if p.facing > 0.0 {
                 p.rect.x + p.rect.w
             } else {
-                p.rect.x - 64.0
+                p.rect.x - reach
             },
             y: p.rect.y - 4.0,
-            w: 64.0,
+            w: reach,
             h: 48.0,
         };
         for enemy in &mut self.enemies {
@@ -283,14 +320,13 @@ impl World {
                 continue;
             }
             if active && !enemy.hit && slash.overlaps(enemy.rect) {
-                enemy.hp -= if p.combo == 3 { 2 } else { 1 };
+                enemy.hp -= damage * if p.combo == 3 { 2 } else { 1 };
                 enemy.hit = true;
                 enemy.invulnerable = 12;
                 enemy.rect.x = (enemy.rect.x + p.facing * 22.0).clamp(0.0, WIDTH - enemy.rect.w);
                 self.events |= 8;
                 if enemy.hp <= 0 {
-                    self.score = self.score.saturating_add(100);
-                    self.events |= 16;
+                    deaths.push((enemy.rect.x, enemy.rect.y, enemy.kind));
                     continue;
                 }
             }
@@ -300,7 +336,14 @@ impl World {
             if enemy.attack == 0 {
                 enemy.facing = if dx < 0.0 { -1.0 } else { 1.0 };
                 enemy.vx = if dx.abs() > 42.0 {
-                    enemy.facing * (66.0 + self.room.min(8) as f32 * 3.0)
+                    enemy.facing
+                        * match enemy.kind {
+                            1 => 115.0,
+                            2 => 58.0,
+                            3 if enemy.hp < enemy.max_hp / 2 => 105.0,
+                            3 => 72.0,
+                            _ => 72.0,
+                        }
                 } else {
                     0.0
                 };
@@ -317,7 +360,11 @@ impl World {
                     0.0
                 };
                 if enemy.attack == 0 {
-                    enemy.cooldown = 45;
+                    enemy.cooldown = if enemy.kind == 3 && enemy.hp < enemy.max_hp / 2 {
+                        22
+                    } else {
+                        45
+                    };
                 }
             }
             move_actor(enemy, &self.platforms, false);
@@ -325,7 +372,7 @@ impl World {
                 && enemy.rect.overlaps(p.rect)
                 && p.invulnerable == 0
             {
-                p.hp -= 1;
+                p.hp -= if enemy.kind >= 2 { 2 } else { 1 };
                 p.invulnerable = 70;
                 self.events |= 32;
                 if p.hp == 0 {
@@ -333,14 +380,11 @@ impl World {
                 }
             }
         }
-        self.save.best = self.save.best.max(self.score);
-        if self.cleared() && self.player.rect.x > 890.0 {
-            self.room = self.room.saturating_add(1);
-            self.save.cleared = self.save.cleared.saturating_add(1);
-            self.player.hp = (self.player.hp + 1).min(5);
-            self.events |= 128;
-            self.generate();
+        for (x, y, kind) in deaths {
+            self.reward_kill(x, y, kind);
         }
+        self.finish_castle_tick(pressed);
+        self.save.best = self.save.best.max(self.score);
     }
 }
 
@@ -512,6 +556,18 @@ pub fn controls_suite() -> u32 {
         w.step(0);
     }
     assert!(w.player.rect.y + w.player.rect.h > 350.0 && w.player.vy > 0.0);
+    w = blank();
+    w.weapon = 2;
+    w.player.attack = 12;
+    w.step(DODGE);
+    assert_eq!(
+        w.player.dodge, 0,
+        "a dagger's active strike cannot be cancelled as recovery"
+    );
+    w.step(0);
+    w.player.attack = 5;
+    w.step(DODGE);
+    assert_eq!(w.player.dodge, 16);
     8
 }
 
