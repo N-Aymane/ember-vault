@@ -123,7 +123,7 @@ pub extern "C" fn entity(kind: u32, index: u32, field: u32) -> f32 {
                     1 => FLOOR_HEIGHT,
                     2 => hazard.w,
                     3 => 58.0,
-                    4 => ((game.ticks + hazard.phase) % 180) as f32,
+                    4 => (game.ticks.wrapping_add(hazard.phase) % 180) as f32,
                     _ => 0.0,
                 }),
             _ => 0.0,

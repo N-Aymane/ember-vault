@@ -575,7 +575,7 @@ impl World {
             }
         }
         for hazard in &self.hazards {
-            let phase = (self.ticks + hazard.phase) % 180;
+            let phase = self.ticks.wrapping_add(hazard.phase) % 180;
             if phase >= 150
                 && self.player.invulnerable == 0
                 && hero.overlaps(Rect {

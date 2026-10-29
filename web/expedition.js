@@ -71,4 +71,5 @@ export function renderMap(){
   }
   if(focused)board.querySelector('[data-room="'+focused+'"]')?.focus();
   $('map-summary').textContent=`${ROOMS[current].name} · ${api.stat(10)} gold · ${api.stat(11)} keys · ${api.stat(12)} flasks · ${weaponLabel(api.stat(13),api.stat(14))}`;
+  $('map-help').textContent=selected===99?'You escaped the keep. A new expedition starts with fresh loot.':`Next route: ${ROOMS[selected].name}. ${api.stat(8)?'Reach the right-hand gate to travel.':'Secure this room before using its exit.'} Choose an adjacent room to change your path.`;
 }
